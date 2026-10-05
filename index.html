@@ -1,0 +1,1083 @@
+<title>Pravaah — know exactly when to book</title>
+<style>
+  :root {
+    --bg: #FAF8F3;
+    --surface: #FFFFFF;
+    --surface-sunk: #F1ECE1;
+    --ink: #242424;
+    --ink-soft: #6B6358;
+    --line: #DCD5C8;
+    --accent: #C96B3B;
+    --accent-ink: #7A3A1C;
+    --accent-soft: #F3DFD2;
+    --urgent: #AE3326;
+    --urgent-soft: #F3DAD2;
+    --wait: #93721A;
+    --wait-soft: #EFE0B0;
+    --open: #526B58;
+    --open-soft: #DEE6DF;
+    --focus: #1C5FAD;
+    --shadow: 0 1px 2px rgba(36,36,36,0.06), 0 8px 24px -12px rgba(36,36,36,0.18);
+  }
+  /* This page commits to one fixed palette — no dark-mode override — so it always matches the brand colours regardless of system or viewer theme. */
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  .brandbar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 28px;
+  }
+  .brand-row { display: flex; align-items: center; gap: 8px; }
+  .brand-icon { flex-shrink: 0; }
+  .brand-mark {
+    font-family: Georgia, "Noto Serif", "Times New Roman", serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  .brandbar .tagline {
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .sub {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 52ch;
+    margin: 0 0 32px;
+  }
+
+  .search-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  form#plannerForm {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  form#plannerForm .field-temple { grid-column: 1 / -1; }
+  @media (min-width: 560px) {
+    form#plannerForm { grid-template-columns: 1fr 1fr; }
+    form#plannerForm .field-temple, form#plannerForm .plan-btn { grid-column: 1 / -1; }
+  }
+  .field { position: relative; display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .field input {
+    font: inherit;
+    font-size: 16px;
+    padding: 11px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunk);
+    color: var(--ink);
+  }
+  .field input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+  }
+  .suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    z-index: 5;
+    display: none;
+  }
+  .suggestions.open { display: block; }
+  .suggestions button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+  .suggestions button:hover, .suggestions button:focus-visible {
+    background: var(--accent-soft);
+    outline: none;
+  }
+  .suggestions button .place-state { color: var(--ink-soft); font-size: 12px; }
+
+  .plan-btn {
+    font: inherit;
+    font-weight: 700;
+    font-size: 15px;
+    background: var(--accent);
+    color: #2B1508;
+    border: none;
+    border-radius: 9px;
+    padding: 13px 18px;
+    cursor: pointer;
+  }
+  .plan-btn:hover { filter: brightness(1.06); }
+  .plan-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .chips button {
+    font: inherit;
+    font-size: 13px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 999px;
+    padding: 6px 13px;
+    cursor: pointer;
+  }
+  .chips button:hover { color: var(--ink); border-color: var(--accent); }
+
+  .error-msg {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--urgent);
+  }
+
+  .results { margin-top: 40px; display: none; }
+  .results.open { display: block; }
+
+  .result-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .result-head h2 {
+    font-family: Georgia, "Noto Serif", "Times New Roman", serif;
+    font-size: 26px;
+    margin: 0;
+  }
+  .result-head .place-meta {
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .result-head .trip-date {
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .panel {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px 22px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .panel::before, .panel::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+  .panel::before { left: -9px; }
+  .panel::after { right: -9px; }
+  .panel-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 10px;
+  }
+
+  .entry { padding: 12px 0; }
+  .entry + .entry { border-top: 1px solid var(--line); }
+  .entry-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .entry-label { font-weight: 700; font-size: 15px; }
+  .entry-fee { color: var(--ink-soft); font-size: 13px; margin-top: 2px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    padding: 4px 11px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.urgent { background: var(--urgent-soft); color: var(--urgent); }
+  .chip.wait { background: var(--wait-soft); color: var(--wait); }
+  .chip.open { background: var(--open-soft); color: var(--open); }
+  .chip.neutral { background: var(--surface-sunk); color: var(--ink-soft); }
+  .entry-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .entry-note { font-size: 14px; margin-top: 8px; color: var(--ink); }
+  .entry-id { font-size: 13px; margin-top: 6px; color: var(--ink-soft); }
+  .entry-id b { color: var(--ink); }
+  .entry-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .entry-link, .remind-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 7px;
+    padding: 6px 10px;
+    text-decoration: none;
+  }
+  .entry-link { color: var(--accent-ink); background: var(--accent-soft); }
+  .remind-link { color: var(--open); background: var(--open-soft); }
+  .entry-link:hover, .remind-link:hover { filter: brightness(0.96); }
+
+  .stay-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 560px) { .stay-grid { grid-template-columns: 1fr 1fr; } }
+  .stay-box {
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stay-box h4 { margin: 0 0 6px; font-size: 14px; }
+  .stay-box p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .stay-box p.stay-distance { margin-top: 8px; }
+  .stay-box p.stay-distance b { color: var(--ink); }
+  .stay-links { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .stay-links a {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border-radius: 7px;
+    padding: 5px 9px;
+    text-decoration: none;
+  }
+  .travel-step { padding: 10px 0; }
+  .travel-step + .travel-step { border-top: 1px solid var(--line); }
+  .travel-step-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .travel-step p { margin: 0; font-size: 14px; }
+  .travel-step p.irctc-note { margin-top: 8px; font-size: 12.5px; color: var(--ink-soft); }
+  .trek-note {
+    margin-top: 12px;
+    background: var(--wait-soft);
+    color: var(--wait);
+    border-radius: 9px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .stay-subhead {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 18px 0 10px;
+  }
+  .stay-subhead:first-child { margin-top: 0; }
+
+  .hotel-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 560px) { .hotel-list { grid-template-columns: 1fr 1fr 1fr; } }
+  .hotel-card {
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 14px;
+  }
+  .hotel-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .hotel-name { font-weight: 700; font-size: 13.5px; }
+  .slab-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-radius: 999px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .slab-tag.slab-budget { background: var(--open-soft); color: var(--open); }
+  .slab-tag.slab-mid { background: var(--wait-soft); color: var(--wait); }
+  .slab-tag.slab-premium { background: var(--accent-soft); color: var(--accent-ink); }
+  .slab-tag.slab-luxury { background: var(--urgent-soft); color: var(--urgent); }
+  .hotel-rating { font-size: 12px; color: var(--accent-ink); margin-top: 4px; font-weight: 600; }
+  .hotel-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  .stay-links-a {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    text-decoration: none;
+  }
+  .stay-links-a:hover { text-decoration: underline; }
+  .hotel-caveat, .remote-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .remote-note { background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 9px; padding: 11px 14px; }
+
+  .chardham-box {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .chardham-box h4 { margin: 0 0 4px; font-size: 14px; color: var(--accent-ink); }
+  .chardham-box p { margin: 0 0 10px; font-size: 12.5px; color: var(--accent-ink); }
+  .chardham-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chardham-chip {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 6px 13px;
+    cursor: pointer;
+  }
+  .chardham-chip:hover { background: var(--accent); color: #2B1508; }
+
+  .nearby-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 560px) { .nearby-list { grid-template-columns: 1fr 1fr; } }
+  .nearby-card {
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 14px;
+  }
+  .nearby-name { font-weight: 700; font-size: 13.5px; }
+  .nearby-distance { font-size: 12px; color: var(--accent-ink); font-weight: 600; margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .nearby-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+
+  .disclaimer {
+    margin-top: 28px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  footer {
+    margin-top: 56px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .panel, .suggestions { transition: opacity 0.15s ease; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="brandbar">
+    <div class="brand-row">
+      <svg class="brand-icon" width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M16 3C16 3 8 13 8 19C8 23.4 11.6 27 16 27C20.4 27 24 23.4 24 19C24 13 16 3 16 3Z" fill="var(--accent)"/>
+        <path d="M12 19C12 21.2 13.8 23 16 23" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="brand-mark">Pravaah</span>
+    </div>
+    <span class="tagline">Let your yatra find its flow.</span>
+  </div>
+  <p class="sub">Pick a temple and your travel date. Get the real official booking portals, the real deadline, and where to stay — dharamshala or hotel.</p>
+
+  <div class="search-card">
+    <form id="plannerForm" autocomplete="off">
+      <div class="field field-temple">
+        <label for="templeInput">Temple or place</label>
+        <input type="text" id="templeInput" placeholder="e.g. Tirupati, Vaishno Devi, Kedarnath…" />
+        <div class="suggestions" id="suggestions" role="listbox"></div>
+      </div>
+      <div class="field">
+        <label for="originInput">Travelling from</label>
+        <input type="text" id="originInput" placeholder="e.g. Bengaluru, Mumbai, Delhi…" />
+        <div class="suggestions" id="originSuggestions" role="listbox"></div>
+      </div>
+      <div class="field">
+        <label for="dateInput">Travel date</label>
+        <input type="date" id="dateInput" />
+      </div>
+      <button type="submit" class="plan-btn">Plan my yatra</button>
+    </form>
+    <div class="chips" id="quickChips"></div>
+    <p class="error-msg" id="errorMsg" hidden></p>
+  </div>
+
+  <section class="results" id="results"></section>
+
+  <footer>Pravaah — informational only, not a booking system. Always confirm on the official portal before you travel; government and trust rules change without notice. Darshan and accommodation data last checked Oct 2026.</footer>
+</div>
+
+<script>
+  var TEMPLES = [
+    {
+      id: "tirupati", name: "Tirupati (Tirumala) — Sri Venkateswara Swamy Temple",
+      aliases: ["tirumala", "tirupati balaji", "venkateswara", "balaji", "ttd"],
+      state: "Andhra Pradesh", deity: "Lord Venkateswara",
+      entries: [
+        { label: "Sarvadarshanam (free darshan)", fee: "Free", leadDays: null, windowNote: "No booking — join the general queue at Tirumala.", link: "https://ttdevasthanams.ap.gov.in/", linkLabel: "TTD official portal", idRequired: "None for the general queue, though carrying a photo ID is wise." },
+        { label: "₹300 Special Entry Darshan", fee: "₹300 per person", leadDays: 90, windowNote: "Released 90 days ahead · max 6 people per booking · non-transferable.", link: "https://ttdevasthanams.ap.gov.in/", linkLabel: "TTD official portal", idRequired: "Aadhaar is mandatory (Voter ID, Driving Licence or Passport also accepted) — every pilgrim's ID must match the booking exactly." },
+        { label: "VIP Break Darshan (Srivani Trust)", fee: "₹10,000 donation + ₹500", leadDays: 30, windowNote: "Requires a Srivani Trust donation first, then a separate slot booking.", link: "https://ttdevasthanams.ap.gov.in/", linkLabel: "TTD official portal", idRequired: "Same Aadhaar/photo ID used for the Srivani Trust donation and booking." }
+      ],
+      stay: { official: { label: "TTD accommodation — Srinivasam and other Nivas guest houses", link: "https://ttdevasthanams.ap.gov.in/", note: "Booked on the same TTD portal. Budget to mid-range, inside Tirumala itself.", distance: "TTD runs both on-hill cottages at Tirumala itself (walking distance to the temple) and Srinivasam in Tirupati town, ~22–25 km away with frequent connecting buses — which one you get depends on availability." } },
+      mapQuery: "Tirupati Tirumala",
+      transport: {
+        airport: { name: "Tirupati Airport (TIR)", distance: "~15 km from Tirupati town, ~35 km from Tirumala hill" },
+        railway: { name: "Tirupati Railway Station (TPTY)", distance: "~22 km from Tirumala" },
+        lastMile: "TTD runs frequent free/paid buses from Tirupati up to Tirumala (about every 2 minutes); paid APSRTC buses and private cabs also run the ghat road. Autos work within Tirupati town but aren't used on the hill road."
+      },
+      nearby: [ { name: "Sri Padmavathi Ammavari Temple, Tiruchanur", distance: "~5 km", note: "Goddess Padmavathi's temple \u2014 Lord Venkateswara's consort; many pilgrims visit both in one trip" }, { name: "Sri Kalahasti Temple", distance: "~36 km", note: "A Pancha Bhuta Sthalam (Vayu/wind lingam), a major Shiva shrine" } ]
+    },
+    {
+      id: "vaishnodevi", name: "Vaishno Devi (Katra) — Trikuta Hills",
+      aliases: ["mata vaishno devi", "katra", "trikuta", "vaishnodevi"],
+      state: "Jammu & Kashmir", deity: "Mata Vaishno Devi",
+      entries: [
+        { label: "Yatra Parchi — RFID registration (mandatory)", fee: "Free", leadDays: 21, windowNote: "Rolling registration, no fixed release date — but register at least 2–3 weeks ahead. The portal can pause temporarily during extreme rush.", link: "https://online.maavaishnodevi.org/", linkLabel: "Shrine Board portal", idRequired: "Aadhaar, Voter ID, Driving Licence or Passport — carry the same ID used at registration when collecting your RFID card." }
+      ],
+      stay: { official: { label: "Shrine Board Bhawans & Niharika", link: "https://www.maavaishnodevi.org/", note: "Book via the Shrine Board site. Dorm-style to simple private rooms along the trek route and at Katra base camp.", distance: "Niharika and the other base-camp bhawans are in Katra, ~13 km from the shrine itself; smaller Shrine Board bhawans also sit directly along the trek route (Adhkuwari, Sanjichhat) for pilgrims breaking the climb." } },
+      mapQuery: "Katra Jammu",
+      transport: {
+        airport: { name: "Jammu Airport (IXJ)", distance: "~45 km from Katra" },
+        railway: { name: "Shri Mata Vaishno Devi Katra Railway Station (SVDK)", distance: "Right in Katra — the yatra starts a short walk from here" },
+        lastMile: "From Katra, the shrine is a ~13 km trek — on foot, by pony/mule, palki (palanquin), or helicopter from Sanjichhat (book separately, weather-dependent).",
+        trekNote: true
+      },
+      nearby: [ { name: "Baba Dhansar", distance: "~15 km from Katra", note: "Shiva shrine with a natural waterfall and cave" }, { name: "Shiv Khori", distance: "~60\u201380 km from Katra", note: "Natural cave shrine of Lord Shiva, a popular full-day add-on" } ]
+    },
+    {
+      id: "shirdi", name: "Shirdi — Sai Baba Samadhi Mandir",
+      aliases: ["sai baba", "shirdi sai"],
+      state: "Maharashtra", deity: "Shirdi Sai Baba",
+      entries: [
+        { label: "Free Darshan", fee: "Free", leadDays: null, windowNote: "No booking — general queue.", link: "https://online.sai.org.in/", linkLabel: "Sai Sansthan portal", idRequired: "None for the general queue." },
+        { label: "Paid / VIP Darshan & Aarti", fee: "Paid, varies by seva", leadDays: 60, windowNote: "Quota released 60 days ahead.", link: "https://online.sai.org.in/", linkLabel: "Sai Sansthan portal", idRequired: "Government photo ID (Aadhaar, Passport, Voter ID or Driving Licence) — the name must match your booking exactly." }
+      ],
+      stay: { official: { label: "Bhakt Niwas (Sansthan accommodation)", link: "https://sai.org.in/en/accomodations", note: "Booked 60 days ahead on the same portal. Max 4 people per room, 48-hour stay limit.", distance: "~1.3 km from the temple (New Bhakt Niwas) — a short auto ride or 15–20 minute walk." } },
+      mapQuery: "Shirdi Maharashtra",
+      transport: {
+        airport: { name: "Shirdi Airport (SAG)", distance: "~10–15 km from the temple" },
+        railway: { name: "Sainagar Shirdi Railway Station (SNSI)", distance: "~3 km from the temple" },
+        lastMile: "Autos from the station run roughly ₹100 (small auto, 4–5 people) to ₹150 (larger shared auto); cabs are also easy to find."
+      },
+      nearby: [ { name: "Shani Shingnapur", distance: "~70\u201375 km", note: "Famous open, door-less temple to Shani Dev" } ]
+    },
+    {
+      id: "kedarnath", name: "Kedarnath Temple",
+      aliases: ["kedarnath", "char dham kedarnath"],
+      state: "Uttarakhand", deity: "Lord Shiva",
+      entries: [
+        { label: "Char Dham Yatra registration (mandatory)", fee: "Free", leadDays: null, windowNote: "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.", link: "https://registrationandtouristcare.uk.gov.in/", linkLabel: "Uttarakhand Tourist Care portal", idRequired: "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters." }
+      ],
+      stay: { official: { label: "GMVN guest houses", link: "https://gmvnonline.com/", note: "Government-run budget to mid-range rooms along the Char Dham route; Kedarnath itself also has basic trust-run rooms near the shrine.", distance: "GMVN's Kedarnath camps are ~0.5–2 km from the temple, right at the end of the trek." } },
+      mapQuery: "Kedarnath Uttarakhand",
+      transport: {
+        airport: { name: "Jolly Grant Airport, Dehradun (DED)", distance: "~239 km from Kedarnath" },
+        railway: { name: "Rishikesh Railway Station", distance: "~215–220 km from Kedarnath" },
+        lastMile: "The road ends at Sonprayag/Gaurikund; from there it's a ~16–18 km trek, pony, palki or helicopter (from Phata/Sersi/Guptkashi) to the temple.",
+        trekNote: true
+      },
+      nearby: [ { name: "Tungnath (Panch Kedar)", distance: "~88 km by road + a 4 km trek (via Gaurikund\u2013Sonprayag\u2013Chopta)", note: "The world's highest Shiva temple, part of the Panch Kedar circuit" } ],
+      chardhamCircuit: true
+    },
+    {
+      id: "badrinath", name: "Badrinath Temple",
+      aliases: ["badrinath", "badrinarayan", "char dham badrinath"],
+      state: "Uttarakhand", deity: "Lord Vishnu (Badrinarayan)",
+      entries: [
+        { label: "Char Dham Yatra registration (mandatory)", fee: "Free", leadDays: null, windowNote: "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.", link: "https://registrationandtouristcare.uk.gov.in/", linkLabel: "Uttarakhand Tourist Care portal", idRequired: "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters." }
+      ],
+      stay: { official: { label: "GMVN guest houses", link: "https://gmvnonline.com/", note: "Government-run budget to mid-range rooms; Badrinath town also has private hotels and dharamshalas near the temple.", distance: "~700 m from the temple — an easy walk." } },
+      mapQuery: "Badrinath Uttarakhand",
+      transport: {
+        airport: { name: "Jolly Grant Airport, Dehradun (DED)", distance: "~310–320 km from Badrinath" },
+        railway: { name: "Rishikesh Railway Station", distance: "~295–300 km from Badrinath" },
+        lastMile: "Badrinath is motorable all the way via Joshimath — shared taxis and buses run right to the temple; no trek required for the main shrine."
+      },
+      nearby: [ { name: "Mana Village", distance: "~3 km", note: "India's last village before the Tibet border \u2014 Vyas Gufa and Bhim Pul are close by" } ],
+      chardhamCircuit: true
+    },
+    {
+      id: "gangotri", name: "Gangotri Temple",
+      aliases: ["gangotri", "char dham gangotri"],
+      state: "Uttarakhand", deity: "Goddess Ganga",
+      entries: [
+        { label: "Char Dham Yatra registration (mandatory)", fee: "Free", leadDays: null, windowNote: "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.", link: "https://registrationandtouristcare.uk.gov.in/", linkLabel: "Uttarakhand Tourist Care portal", idRequired: "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters." }
+      ],
+      stay: { official: { label: "GMVN guest houses", link: "https://gmvnonline.com/", note: "Government-run budget rooms along the route; limited private options directly in Gangotri.", distance: "Right by the temple — around 30–40 m away." } },
+      mapQuery: "Gangotri Uttarakhand",
+      transport: {
+        airport: { name: "Jolly Grant Airport, Dehradun (DED)", distance: "~250–280 km from Gangotri" },
+        railway: { name: "Rishikesh Railway Station", distance: "~250–260 km from Gangotri" },
+        lastMile: "Gangotri is motorable all the way via Uttarkashi — shared taxis and buses run right to the temple; no trek required for the main shrine."
+      },
+      nearby: [ { name: "Gaumukh", distance: "~18 km trek", note: "The source glacier of the Bhagirathi/Ganga river" } ],
+      chardhamCircuit: true
+    },
+    {
+      id: "yamunotri", name: "Yamunotri Temple",
+      aliases: ["yamunotri", "char dham yamunotri"],
+      state: "Uttarakhand", deity: "Goddess Yamuna",
+      entries: [
+        { label: "Char Dham Yatra registration (mandatory)", fee: "Free", leadDays: null, windowNote: "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.", link: "https://registrationandtouristcare.uk.gov.in/", linkLabel: "Uttarakhand Tourist Care portal", idRequired: "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters." }
+      ],
+      stay: { official: { label: "GMVN guest houses", link: "https://gmvnonline.com/", note: "Government-run budget rooms near Janki Chatti, a short trek from the shrine.", distance: "At Janki Chatti, the roadhead — about 5–6 km short of the shrine itself (see the trek note below)." } },
+      mapQuery: "Yamunotri Uttarakhand",
+      transport: {
+        airport: { name: "Jolly Grant Airport, Dehradun (DED)", distance: "~210–220 km from Janki Chatti" },
+        railway: { name: "Rishikesh Railway Station", distance: "~190–200 km from Janki Chatti" },
+        lastMile: "The road ends at Janki Chatti; from there it's a ~5–6 km trek, pony or palki to the shrine.",
+        trekNote: true
+      },
+      nearby: [ { name: "Surya Kund", distance: "~100 m from the temple", note: "A hot spring where pilgrims cook rice as prasad" } ],
+      chardhamCircuit: true
+    },
+    {
+      id: "kashivishwanath", name: "Kashi Vishwanath Temple (Varanasi)",
+      aliases: ["varanasi", "banaras", "kashi", "kashi vishwanath"],
+      state: "Uttar Pradesh", deity: "Lord Shiva",
+      entries: [
+        { label: "Free Darshan", fee: "Free", leadDays: null, windowNote: "No booking — general queue.", link: "https://www.shrikashivishwanath.org/", linkLabel: "Temple official portal", idRequired: "None for the general queue." },
+        { label: "Sugam Darshan (queue-less)", fee: "₹300", leadDays: 45, windowNote: "Bookable up to 45 days ahead.", link: "https://www.shrikashivishwanath.org/", linkLabel: "Temple official portal", idRequired: "Government photo ID entered at booking (Aadhaar, Passport, etc.) — must match what you present at entry." }
+      ],
+      stay: { official: null, note: "No single official dharamshala portal found — many choultries and dharamshalas operate near Vishwanath Gali on a walk-in or phone basis. Hotels are widely available across Varanasi." },
+      mapQuery: "Varanasi near Kashi Vishwanath Temple",
+      transport: {
+        airport: { name: "Lal Bahadur Shastri Airport, Varanasi (VNS)", distance: "~25 km from the temple" },
+        railway: { name: "Varanasi Junction (BSB)", distance: "~4–5 km from the temple" },
+        lastMile: "Autos, e-rickshaws and cycle-rickshaws run from the station; vehicles can't go right up to Vishwanath Gali, so expect a short walk for the last stretch."
+      },
+      nearby: [ { name: "Sankat Mochan Hanuman Temple", distance: "~3 km from BHU", note: "Popular Hanuman shrine, founded by Tulsidas" }, { name: "Durga Temple (Durga Kund)", distance: "~2 km from BHU", note: "Also called the Monkey Temple" }, { name: "New Vishwanath Temple, BHU", distance: "On the BHU campus", note: "A modern replica built by the Birla family" } ]
+    },
+    {
+      id: "goldentemple", name: "Golden Temple (Sri Harmandir Sahib, Amritsar)",
+      aliases: ["amritsar", "harmandir sahib", "darbar sahib", "golden temple"],
+      state: "Punjab", deity: "Holiest Sikh Gurdwara",
+      entries: [
+        { label: "Darshan (open 24 hours)", fee: "Free", leadDays: null, windowNote: "No booking needed — open to all, every day, 24 hours.", link: "https://www.goldentempleamritsar.org/", linkLabel: "Temple information site", idRequired: "None — open to all." }
+      ],
+      stay: { official: { label: "SGPC Sarai (pilgrim inns)", link: "https://sgpcsarai.com/", note: "Free to nominal-cost rooms run by SGPC. Minimum 2 people per booking, max 2 nights — book a few days ahead around festivals.", distance: "Inside the Golden Temple's own sarai complex — effectively on-site, a short walk from the sanctum." } },
+      mapQuery: "Amritsar near Golden Temple",
+      transport: {
+        airport: { name: "Sri Guru Ram Dass Jee International Airport (ATQ)", distance: "~11 km from the Golden Temple" },
+        railway: { name: "Amritsar Junction (ASR)", distance: "~2 km from the Golden Temple" },
+        lastMile: "Autos, e-rickshaws and cabs run throughout Amritsar; the Golden Temple's own plazas handle the final stretch on foot."
+      },
+      nearby: [ { name: "Durgiana Temple", distance: "~1.2 km", note: "A Hindu temple built in a similar style to the Golden Temple" } ]
+    },
+    {
+      id: "ayodhya", name: "Shri Ram Janmbhoomi Mandir, Ayodhya",
+      aliases: ["ayodhya", "ram janmabhoomi", "ram mandir"],
+      state: "Uttar Pradesh", deity: "Lord Ram",
+      entries: [
+        { label: "General Darshan", fee: "Free", leadDays: null, windowNote: "No pass needed — general queue.", link: "https://online.srjbtkshetra.org/", linkLabel: "Shri Ram Janmbhoomi Teerth Kshetra portal", idRequired: "None for the general queue." },
+        { label: "Sugam Darshan pass", fee: "Free (pass only)", leadDays: 14, windowNote: "Free, but book as soon as your dates are fixed — footfall is extremely high (23+ crore visitors in 2025).", link: "https://online.srjbtkshetra.org/", linkLabel: "Shri Ram Janmbhoomi Teerth Kshetra portal", idRequired: "Government photo ID declared at booking (Aadhaar, Voter ID, Driving Licence or Passport) — the physical copy is mandatory for entry." }
+      ],
+      stay: { official: null, note: "No single official accommodation portal found — the Trust and UP Tourism list dharamshalas; roughly 50 new hotels were opening through 2025 to meet demand." },
+      mapQuery: "Ayodhya Uttar Pradesh",
+      transport: {
+        airport: { name: "Maharishi Valmiki International Airport, Ayodhya (AYJ)", distance: "~10–15 km from the temple" },
+        railway: { name: "Ayodhya Dham Junction", distance: "~5 km from the temple" },
+        lastMile: "Autos, e-rickshaws and cabs run from both the airport and station into central Ayodhya."
+      },
+      nearby: [ { name: "Hanuman Garhi", distance: "~700 m", note: "Hilltop Hanuman temple \u2014 most pilgrims visit this first" }, { name: "Kanak Bhawan", distance: "~600 m", note: "Temple to Ram and Sita, known for its ornate interiors" }, { name: "Nageshwarnath Temple", distance: "~1.5\u20131.8 km", note: "Ancient Shiva temple linked to Kush, son of Lord Ram" } ]
+    },
+    {
+      id: "puri", name: "Shree Jagannath Temple, Puri",
+      aliases: ["puri", "jagannath temple", "jagannath puri"],
+      state: "Odisha", deity: "Lord Jagannath",
+      entries: [
+        { label: "General Darshan", fee: "Free", leadDays: null, windowNote: "No online booking system found as of this research. Temple opens 5am — arrive early morning or evening to avoid the longest queues. Note: entry is restricted to Hindus; non-Hindu visitors can view the temple from the Meghanad Pacheri boundary wall. Check SJTA's official channels for any future booking system.", link: "https://shreejagannathapuri.com/", linkLabel: "Temple information site", idRequired: "None required for entry, though it is restricted to Hindus (see note above)." }
+      ],
+      stay: { official: null, note: "Numerous mutths and dharamshalas near the temple, mostly walk-in. Hotels widely available along Puri's beach road." },
+      mapQuery: "Puri near Jagannath Temple",
+      transport: {
+        airport: { name: "Biju Patnaik International Airport, Bhubaneswar (BBI)", distance: "~60 km from Puri" },
+        railway: { name: "Puri Railway Station", distance: "~2 km from the temple" },
+        lastMile: "Autos and cycle-rickshaws run from the station into the temple area."
+      },
+      nearby: [ { name: "Konark Sun Temple", distance: "~35 km", note: "UNESCO World Heritage Sun Temple" }, { name: "Lingaraj Temple, Bhubaneswar", distance: "~65 km", note: "One of Odisha's oldest and largest Shiva temples" } ]
+    },
+    {
+      id: "rameswaram", name: "Ramanathaswamy Temple, Rameswaram",
+      aliases: ["rameswaram", "ramanathaswamy"],
+      state: "Tamil Nadu", deity: "Lord Shiva",
+      entries: [
+        { label: "General Darshan", fee: "Free", leadDays: null, windowNote: "No online booking system found — managed by Tamil Nadu HR&CE, general queue-based entry.", link: "https://rameswaramramanathar.hrce.tn.gov.in/", linkLabel: "HR&CE temple portal", idRequired: "None for general entry." }
+      ],
+      stay: { official: null, note: "Choultries and dharamshalas near the temple on a walk-in basis. Hotels available across Rameswaram town." },
+      mapQuery: "Rameswaram Tamil Nadu",
+      transport: {
+        airport: { name: "Madurai Airport (IXM)", distance: "~170–175 km from Rameswaram" },
+        railway: { name: "Rameswaram Railway Station (RMM)", distance: "Right in town, ~1–2 km from the temple" },
+        lastMile: "Autos and cabs run from the station; Madurai airport taxis also run the full route directly to Rameswaram."
+      },
+      nearby: [ { name: "Kothandaramaswamy Temple", distance: "~13 km, en route to Dhanushkodi", note: "The only structure left standing after the 1964 cyclone" }, { name: "Dhanushkodi", distance: "~19 km", note: "Ghost town at the island's tip, with ruined temple remains" } ]
+    },
+    {
+      id: "dwarka", name: "Dwarkadhish Temple, Dwarka",
+      aliases: ["dwarka", "dwarkadhish"],
+      state: "Gujarat", deity: "Lord Krishna",
+      entries: [
+        { label: "General Darshan", fee: "Free", leadDays: null, windowNote: "No centralized online booking portal identified in this research — general queue-based entry. Check the Dwarkadhish Temple Trust or Gujarat Tourism closer to your date.", link: null, linkLabel: null, idRequired: "None for general entry." }
+      ],
+      stay: { official: null, note: "Dharamshalas run by various trusts near the temple. Hotels available across Dwarka town." },
+      mapQuery: "Dwarka Gujarat",
+      transport: {
+        airport: { name: "Jamnagar Airport (JGA) or Porbandar Airport (PBD)", distance: "~110 km (Jamnagar) / ~108 km (Porbandar) from Dwarka" },
+        railway: { name: "Dwarka Railway Station", distance: "~1–2 km from the temple" },
+        lastMile: "Autos and cabs run from the station; both airports have taxi counters for the longer run into Dwarka."
+      },
+      nearby: [ { name: "Nageshwar Jyotirlinga", distance: "~18 km", note: "One of the 12 Jyotirlingas of Lord Shiva" }, { name: "Rukmini Devi Temple", distance: "~2 km", note: "Dedicated to Lord Krishna's chief queen" }, { name: "Bet Dwarka", distance: "Ferry from Okha, ~30 km away", note: "Island believed to be Krishna's original residence" } ]
+    }
+  ];
+
+  var ORIGIN_CITIES = [
+    "Bengaluru", "Mumbai", "Delhi", "Chennai", "Hyderabad", "Kolkata", "Pune", "Ahmedabad",
+    "Jaipur", "Lucknow", "Chandigarh", "Kochi", "Coimbatore", "Nagpur", "Indore", "Bhopal",
+    "Surat", "Vadodara", "Patna", "Bhubaneswar", "Guwahati", "Visakhapatnam", "Thiruvananthapuram",
+    "Mysuru", "Nashik", "Ranchi", "Raipur", "Dehradun", "Amritsar", "Varanasi", "Madurai",
+    "Noida", "Gurugram", "Thane", "Nagercoil", "Rajkot", "Kanpur", "Agra", "Vijayawada",
+    "Mangaluru", "Hubballi", "Jammu", "Shimla", "Dehradun", "Haridwar", "Nellore", "Warangal"
+  ];
+
+  var HOTELS = {
+    tirupati: [
+      { name: "Hotel Janas", slab: "budget", rating: null, note: "Well-reviewed budget stay in Tirupati town" },
+      { name: "Hotel Sahana Grand", slab: "mid", rating: "8.8/10", note: "Strong guest ratings, central Tirupati" },
+      { name: "Taj Tirupati", slab: "premium", rating: null, note: "Recognised 5-star brand, Tirupati town" }
+    ],
+    vaishnodevi: [
+      { name: "Hotel Saraswati", slab: "budget", rating: null, note: "Very close to the Yatra Parchi counter, Katra" },
+      { name: "The White Hotel Katra", slab: "mid", rating: "4.7★ (1,861 reviews)", note: "Consistently well-rated, central Katra" },
+      { name: "Vivanta Katra Vaishno Devi", slab: "luxury", rating: "9.0/10 (242 reviews)", note: "Top-rated luxury stay in Katra" }
+    ],
+    shirdi: [
+      { name: "Hotel Shradha Saburi Palace", slab: "budget", rating: "4.2★", note: "Good-value budget option" },
+      { name: "Saibaba International Hotel", slab: "mid", rating: "4.6★ (#15 of 124 hotels)", note: "Right in front of the temple" },
+      { name: "Hotel Abigail Goradia's Shirdi", slab: "premium", rating: "4.8★ (540 reviews)", note: "Highly rated, full-service stay" }
+    ],
+    kashivishwanath: [
+      { name: "Sankatha Guest House", slab: "budget", rating: null, note: "On the ghats, near Burning Ghat" },
+      { name: "Hotel Ganges Grand", slab: "mid", rating: "7.4/10", note: "~600m from the temple" },
+      { name: "BrijRama Palace, Varanasi", slab: "luxury", rating: "9.4/10", note: "Heritage riverside 5-star on the Ganges" }
+    ],
+    goldentemple: [
+      { name: "Abode By Aliste Hotels Amritsar", slab: "budget", rating: "4.3★", note: "2-minute walk from the Golden Temple" },
+      { name: "Holiday Inn Amritsar Ranjit Avenue", slab: "mid", rating: "4.5★ (2,847 reviews)", note: "Shuttle to Darbar Sahib" },
+      { name: "Hyatt Regency Amritsar Hotel & Spa", slab: "luxury", rating: "4.4★ (4,758 reviews)", note: "Free transport to the temple" }
+    ],
+    ayodhya: [
+      { name: "Hotel Natraj (Natraj Homes)", slab: "budget", rating: null, note: "Close to Ram Mandir and the Saryu River" },
+      { name: "Hotel Rudraksha Premier", slab: "mid", rating: "9.9/10", note: "Strong guest ratings in central Ayodhya" },
+      { name: "Amritara Ramila Kutir Ayodhya", slab: "premium", rating: "9.4/10", note: "Well-reviewed premium cottages" }
+    ],
+    puri: [
+      { name: "Shree Dham Palace", slab: "budget", rating: null, note: "Budget-friendly, near the temple" },
+      { name: "Pride Ananya Resorts", slab: "mid", rating: null, note: "Popular mid-range beach-road option" },
+      { name: "Mayfair Waves", slab: "luxury", rating: null, note: "5-star, 2-minute walk to the beach" }
+    ],
+    rameswaram: [
+      { name: "Hotel Tamil Nadu (TTDC)", slab: "budget", rating: null, note: "Government-run, ~500m from the temple" },
+      { name: "The Residency Towers", slab: "mid", rating: "4.7★ (1,706 reviews)", note: "Central, near Dhanushkodi Road" },
+      { name: "Hyatt Place Rameswaram", slab: "luxury", rating: null, note: "Recognised international brand" }
+    ],
+    dwarka: [
+      { name: "Hotel Shree Darshan", slab: "budget", rating: null, note: "Budget stay close to the temple" },
+      { name: "Lemon Tree Premier, Dwarka", slab: "mid", rating: null, note: "4-star, ~11-minute walk from the temple" },
+      { name: "Hawthorn Suites By Wyndham Dwarka", slab: "luxury", rating: "4.8★ (#1 Best Value luxury)", note: "Top-rated luxury option in Dwarka" }
+    ]
+  };
+  var REMOTE_STAY_NOTE = "Hotel options this high in the Himalayas are limited and highly seasonal. GMVN guest houses (above) are the most reliable way to book ahead; a handful of private lodges open only during the yatra season and are usually booked on arrival or through a local operator.";
+
+  var templeInput = document.getElementById("templeInput");
+  var originInput = document.getElementById("originInput");
+  var dateInput = document.getElementById("dateInput");
+  var suggestionsBox = document.getElementById("suggestions");
+  var originSuggestionsBox = document.getElementById("originSuggestions");
+  var form = document.getElementById("plannerForm");
+  var results = document.getElementById("results");
+  var errorMsg = document.getElementById("errorMsg");
+  var quickChips = document.getElementById("quickChips");
+  var selectedTemple = null;
+
+  function todayISO() {
+    var d = new Date();
+    d.setHours(0,0,0,0);
+    var y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"), day = String(d.getDate()).padStart(2,"0");
+    return y + "-" + m + "-" + day;
+  }
+  dateInput.min = todayISO();
+
+  var QUICK_IDS = ["tirupati", "vaishnodevi", "shirdi", "kedarnath", "kashivishwanath", "goldentemple", "ayodhya", "puri"];
+  quickChips.innerHTML = QUICK_IDS.map(function(id) {
+    var t = TEMPLES.find(function(x){ return x.id === id; });
+    return '<button type="button" data-id="' + t.id + '">' + t.name.split(" (")[0].split(" —")[0] + "</button>";
+  }).join("");
+  quickChips.addEventListener("click", function(e) {
+    var btn = e.target.closest("button[data-id]");
+    if (!btn) return;
+    var t = TEMPLES.find(function(x){ return x.id === btn.dataset.id; });
+    if (t) { templeInput.value = t.name; selectedTemple = t; closeSuggestions(); }
+  });
+
+  function matchTemples(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) return [];
+    return TEMPLES.filter(function(t) {
+      if (t.name.toLowerCase().indexOf(q) !== -1) return true;
+      if (t.state.toLowerCase().indexOf(q) !== -1) return true;
+      return t.aliases.some(function(a){ return a.indexOf(q) !== -1 || q.indexOf(a) !== -1; });
+    }).slice(0, 6);
+  }
+
+  function renderSuggestions(list) {
+    if (!list.length) { closeSuggestions(); return; }
+    suggestionsBox.innerHTML = list.map(function(t) {
+      return '<button type="button" role="option" data-id="' + t.id + '">' + t.name +
+             '<div class="place-state">' + t.state + "</div></button>";
+    }).join("");
+    suggestionsBox.classList.add("open");
+  }
+  function closeSuggestions() { suggestionsBox.classList.remove("open"); suggestionsBox.innerHTML = ""; }
+
+  templeInput.addEventListener("input", function() {
+    selectedTemple = null;
+    renderSuggestions(matchTemples(templeInput.value));
+  });
+  templeInput.addEventListener("focus", function() {
+    if (templeInput.value) renderSuggestions(matchTemples(templeInput.value));
+  });
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest(".field")) { closeSuggestions(); closeCitySuggestions(); }
+  });
+  suggestionsBox.addEventListener("click", function(e) {
+    var btn = e.target.closest("button[data-id]");
+    if (!btn) return;
+    var t = TEMPLES.find(function(x){ return x.id === btn.dataset.id; });
+    if (t) { templeInput.value = t.name; selectedTemple = t; closeSuggestions(); }
+  });
+
+  function matchCities(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) return [];
+    var seen = {};
+    return ORIGIN_CITIES.filter(function(c) {
+      var k = c.toLowerCase();
+      if (seen[k]) return false;
+      var isMatch = k.indexOf(q) !== -1;
+      if (isMatch) seen[k] = true;
+      return isMatch;
+    }).slice(0, 6);
+  }
+  function renderCitySuggestions(list) {
+    if (!list.length) { closeCitySuggestions(); return; }
+    originSuggestionsBox.innerHTML = list.map(function(c) {
+      return '<button type="button" role="option">' + c + "</button>";
+    }).join("");
+    originSuggestionsBox.classList.add("open");
+  }
+  function closeCitySuggestions() { originSuggestionsBox.classList.remove("open"); originSuggestionsBox.innerHTML = ""; }
+
+  originInput.addEventListener("input", function() {
+    renderCitySuggestions(matchCities(originInput.value));
+  });
+  originInput.addEventListener("focus", function() {
+    if (originInput.value) renderCitySuggestions(matchCities(originInput.value));
+  });
+  originSuggestionsBox.addEventListener("click", function(e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    originInput.value = btn.textContent;
+    closeCitySuggestions();
+  });
+
+  function resolveTemple() {
+    if (selectedTemple) return selectedTemple;
+    var matches = matchTemples(templeInput.value);
+    return matches[0] || null;
+  }
+
+  function formatDate(d) {
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return d.getDate() + " " + months.at(d.getMonth()) + " " + d.getFullYear();
+  }
+  function daysBetween(a, b) { return Math.round((b.getTime() - a.getTime()) / 86400000); }
+
+  function icsDateStr(d) {
+    return "" + d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+  }
+  function buildReminderHref(templeName, entryLabel, date) {
+    var start = icsDateStr(date);
+    var end = icsDateStr(new Date(date.getTime() + 86400000));
+    var uid = start + "-" + Math.random().toString(36).slice(2, 10) + "@pravaah";
+    var summary = "Booking opens: " + templeName.split(" (")[0].split(" —")[0] + " — " + entryLabel;
+    var desc = "Pravaah reminder: the booking window for " + entryLabel + " at " + templeName + " opens today. Check the official portal and book your slot.";
+    var lines = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pravaah//Yatra Planner//EN", "CALSCALE:GREGORIAN",
+      "BEGIN:VEVENT", "UID:" + uid, "DTSTAMP:" + start + "T000000Z",
+      "DTSTART;VALUE=DATE:" + start, "DTEND;VALUE=DATE:" + end,
+      "SUMMARY:" + summary, "DESCRIPTION:" + desc, "END:VEVENT", "END:VCALENDAR"
+    ];
+    return "data:text/calendar;charset=utf-8," + encodeURIComponent(lines.join("\r\n"));
+  }
+
+  function computeStatus(entry, travelDate, today) {
+    if (entry.leadDays === null) {
+      var wn = entry.windowNote || "";
+      var tone = wn.toLowerCase().indexOf("no booking") !== -1 || wn.toLowerCase().indexOf("no pass needed") !== -1 ? "neutral" : "wait";
+      var label = tone === "neutral" ? "No booking needed" : "Rolling — register ASAP";
+      return { chip: label, sub: null, tone: tone };
+    }
+    var bookingOpens = new Date(travelDate.getTime() - entry.leadDays * 86400000);
+    var dUntilOpen = daysBetween(today, bookingOpens);
+    var dUntilTravel = daysBetween(today, travelDate);
+    if (dUntilOpen > 0) {
+      return { chip: "Opens " + formatDate(bookingOpens), sub: dUntilOpen + " day" + (dUntilOpen === 1 ? "" : "s") + " from now", tone: "wait", remindDate: bookingOpens };
+    }
+    if (dUntilTravel <= 7) {
+      return { chip: "Book now", sub: dUntilTravel + " day" + (dUntilTravel === 1 ? "" : "s") + " to your trip", tone: "urgent" };
+    }
+    return { chip: "Window is open", sub: "Opened " + formatDate(bookingOpens) + " — book when ready", tone: "open" };
+  }
+
+  function entryHTML(entry, travelDate, today, templeName) {
+    var status = computeStatus(entry, travelDate, today);
+    var link = entry.link ? '<a class="entry-link" href="' + entry.link + '" target="_blank" rel="noopener">Open ' + entry.linkLabel + " →</a>" : "";
+    var remind = status.remindDate
+      ? '<a class="remind-link" href="' + buildReminderHref(templeName, entry.label, status.remindDate) + '" download="' + templeName.split(" ")[0].toLowerCase() + '-reminder.ics">🔔 Remind me on ' + formatDate(status.remindDate) + '</a>'
+      : "";
+    return '<div class="entry">' +
+      '<div class="entry-top">' +
+        '<div><div class="entry-label">' + entry.label + '</div><div class="entry-fee">' + entry.fee + '</div></div>' +
+        '<span class="chip ' + status.tone + '">' + status.chip + '</span>' +
+      '</div>' +
+      (status.sub ? '<div class="entry-sub">' + status.sub + '</div>' : '') +
+      '<div class="entry-note">' + entry.windowNote + '</div>' +
+      (entry.idRequired ? '<div class="entry-id"><b>ID required:</b> ' + entry.idRequired + '</div>' : '') +
+      '<div class="entry-actions">' + link + remind + '</div>' +
+    '</div>';
+  }
+
+  function hotelListHTML(temple) {
+    var list = HOTELS[temple.id];
+    var destCity = temple.mapQuery.split(" near ")[0];
+    if (!list) {
+      return '<p class="remote-note">' + REMOTE_STAY_NOTE + '</p>';
+    }
+    return '<div class="hotel-list">' + list.map(function(h) {
+      var searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(h.name + " " + destCity + " reviews price");
+      return '<div class="hotel-card">' +
+        '<div class="hotel-card-top"><span class="hotel-name">' + h.name + '</span><span class="slab-tag slab-' + h.slab + '">' + h.slab + '</span></div>' +
+        (h.rating ? '<div class="hotel-rating">★ ' + h.rating + '</div>' : '') +
+        '<div class="hotel-note">' + h.note + '</div>' +
+        '<a class="stay-links-a" href="' + searchUrl + '" target="_blank" rel="noopener">Check current rates →</a>' +
+      '</div>';
+    }).join("") + '</div>' +
+    '<p class="hotel-caveat">Names and ratings are from recent travel-site research, not a live feed — prices move with season and demand, so check the link before you book.</p>';
+  }
+
+  function stayHTML(temple) {
+    var officialBox = temple.stay.official
+      ? '<div class="stay-box"><h4>Dharamshala / trust stay</h4><p><b>' + temple.stay.official.label + '</b> — ' + temple.stay.official.note + '</p>' +
+        '<p class="stay-distance"><b>How far:</b> ' + temple.stay.official.distance + '</p>' +
+        '<p class="stay-distance"><b>ID required:</b> Government photo ID (Aadhaar, Voter ID, Passport or Driving Licence) at check-in, matching the name on your booking.</p>' +
+        '<div class="stay-links"><a href="' + temple.stay.official.link + '" target="_blank" rel="noopener">Official booking →</a></div></div>'
+      : '<div class="stay-box"><h4>Dharamshala / trust stay</h4><p>' + temple.stay.note + '</p></div>';
+    var mapsUrl = "https://www.google.com/maps/search/hotels+near+" + encodeURIComponent(temple.mapQuery);
+    var bookingUrl = "https://www.booking.com/searchresults.html?ss=" + encodeURIComponent(temple.mapQuery);
+    var hotelBox = '<div class="stay-box"><h4>Browse all hotels</h4><p>Compare live rates and availability near ' + temple.mapQuery.split(" near ")[0] + '.</p>' +
+      '<div class="stay-links"><a href="' + mapsUrl + '" target="_blank" rel="noopener">Google Maps →</a><a href="' + bookingUrl + '" target="_blank" rel="noopener">Booking.com →</a></div></div>';
+    return '<div class="stay-grid">' + officialBox + hotelBox + '</div>' +
+      '<p class="stay-subhead">Top-rated hotels near you</p>' + hotelListHTML(temple);
+  }
+
+  function travelHTML(temple, origin) {
+    var t = temple.transport;
+    var destCity = temple.mapQuery.split(" near ")[0];
+    var steps = "";
+    if (origin) {
+      var flightUrl = "https://www.google.com/travel/flights?q=" + encodeURIComponent("Flights from " + origin + " to " + t.airport.name.replace(/\s*\([A-Z]{3}\)\s*/, " "));
+      var trainUrl = "https://www.google.com/search?q=" + encodeURIComponent("trains from " + origin + " to " + t.railway.name);
+      var busHubUrl = "https://www.google.com/search?q=" + encodeURIComponent("buses from " + origin + " to " + destCity);
+      steps += '<div class="travel-step">' +
+        '<div class="travel-step-label">1 · ' + origin + ' → nearest hub</div>' +
+        '<p>Fly into <b>' + t.airport.name + '</b> (' + t.airport.distance + ') or take a train to <b>' + t.railway.name + '</b> (' + t.railway.distance + ').</p>' +
+        '<div class="stay-links"><a href="' + flightUrl + '" target="_blank" rel="noopener">Search flights →</a><a href="' + trainUrl + '" target="_blank" rel="noopener">Search trains →</a></div>' +
+        '<p class="irctc-note">IRCTC opens train bookings 60 days before departure (counted from the train\'s origin station, not yours), daily at 8:00am IST. On the opening day, only Aadhaar-linked IRCTC accounts can book online during the rush; Tatkal quota opens 1 day before travel.</p>' +
+      '</div>' +
+      '<div class="travel-step">' +
+        '<div class="travel-step-label">2 · Or go direct by bus</div>' +
+        '<p>Inter-city buses (government and private overnight services) often run straight into ' + destCity + ' itself, skipping the airport/station handoff and the last-mile leg below entirely. Worth comparing on cost and time against flying or training in, especially under ~600 km.</p>' +
+        '<div class="stay-links"><a href="' + busHubUrl + '" target="_blank" rel="noopener">Search buses →</a><a href="https://www.redbus.in/" target="_blank" rel="noopener">RedBus →</a></div>' +
+      '</div>';
+    } else {
+      steps += '<div class="travel-step">' +
+        '<div class="travel-step-label">Nearest hub</div>' +
+        '<p>Fly into <b>' + t.airport.name + '</b> (' + t.airport.distance + ') or take a train to <b>' + t.railway.name + '</b> (' + t.railway.distance + '). Inter-city buses often run direct into ' + destCity + ', skipping both. Add where you\'re travelling from above to get direct flight, train and bus search links.</p>' +
+      '</div>';
+    }
+    var mapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(t.airport.name) + "&destination=" + encodeURIComponent(destCity) + "&travelmode=driving";
+    steps += '<div class="travel-step">' +
+      '<div class="travel-step-label">' + (origin ? "3" : "·") + ' · Hub → ' + destCity + ' (last mile)</div>' +
+      '<p>' + t.lastMile + '</p>' +
+      '<div class="stay-links"><a href="' + mapsUrl + '" target="_blank" rel="noopener">Directions on Google Maps →</a><a href="https://www.uber.com/in/en/" target="_blank" rel="noopener">Uber →</a><a href="https://book.olacabs.com/" target="_blank" rel="noopener">Ola →</a></div>' +
+    '</div>';
+    if (t.trekNote) {
+      steps += '<div class="trek-note">This temple\'s final stretch is on foot, pony/mule, palki or helicopter — not a road. Book pony/palki on arrival, or reserve a helicopter slot in advance if you want to skip the trek.</div>';
+    }
+    return steps;
+  }
+
+  var CHARDHAM_IDS = ["kedarnath", "badrinath", "gangotri", "yamunotri"];
+
+  function goToTemple(id) {
+    var t = TEMPLES.find(function(x){ return x.id === id; });
+    if (!t) return;
+    templeInput.value = t.name;
+    selectedTemple = t;
+    closeSuggestions();
+    if (dateInput.value) {
+      var travelDate = new Date(dateInput.value + "T00:00:00");
+      var today = new Date(); today.setHours(0,0,0,0);
+      if (travelDate >= today) {
+        render(t, travelDate, originInput.value.trim());
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+    results.classList.remove("open");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    templeInput.focus();
+  }
+
+  function nearbyHTML(temple) {
+    var chardhamBox = "";
+    if (temple.chardhamCircuit) {
+      var others = CHARDHAM_IDS.filter(function(id){ return id !== temple.id; });
+      chardhamBox = '<div class="chardham-box"><h4>Part of the Char Dham circuit</h4><p>Most pilgrims cover all four in one yatra:</p><div class="chardham-chips">' +
+        others.map(function(id) {
+          var t = TEMPLES.find(function(x){ return x.id === id; });
+          return '<button type="button" class="chardham-chip" data-goto="' + id + '">' + t.name.split(" Temple")[0] + '</button>';
+        }).join("") + '</div></div>';
+    }
+    var list = '<div class="nearby-list">' + temple.nearby.map(function(n) {
+      var searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(n.name + " timings how to reach");
+      return '<div class="nearby-card">' +
+        '<div class="nearby-name">' + n.name + '</div>' +
+        '<div class="nearby-distance">' + n.distance + '</div>' +
+        '<div class="nearby-note">' + n.note + '</div>' +
+        '<a class="stay-links-a" href="' + searchUrl + '" target="_blank" rel="noopener">More info →</a>' +
+      '</div>';
+    }).join("") + '</div>';
+    return chardhamBox + list;
+  }
+
+  function render(temple, travelDate, origin) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    var html =
+      '<div class="result-head">' +
+        '<div><h2>' + temple.name + '</h2><div class="place-meta">' + temple.state + ' · ' + temple.deity + '</div></div>' +
+        '<div class="trip-date">Travelling ' + formatDate(travelDate) + '</div>' +
+      '</div>' +
+      '<div class="panel"><p class="panel-title">Where &amp; when to book darshan</p>' +
+        temple.entries.map(function(e){ return entryHTML(e, travelDate, today, temple.name); }).join("") +
+      '</div>' +
+      '<div class="panel"><p class="panel-title">Where to stay</p>' + stayHTML(temple) + '</div>' +
+      '<div class="panel"><p class="panel-title">How to get there</p>' + travelHTML(temple, origin) + '</div>' +
+      '<div class="panel"><p class="panel-title">Nearby temples to visit</p>' + nearbyHTML(temple) + '</div>';
+    results.innerHTML = html;
+    results.classList.add("open");
+  }
+
+  results.addEventListener("click", function(e) {
+    var btn = e.target.closest("[data-goto]");
+    if (!btn) return;
+    goToTemple(btn.dataset.goto);
+  });
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    errorMsg.hidden = true;
+    var temple = resolveTemple();
+    if (!temple) {
+      errorMsg.textContent = "We don't have that temple in the Phase 1 list yet — try one of the suggestions above, like Tirupati, Vaishno Devi or Shirdi.";
+      errorMsg.hidden = false;
+      results.classList.remove("open");
+      return;
+    }
+    if (!dateInput.value) {
+      errorMsg.textContent = "Pick a travel date so we can work out the real booking deadline.";
+      errorMsg.hidden = false;
+      results.classList.remove("open");
+      return;
+    }
+    var travelDate = new Date(dateInput.value + "T00:00:00");
+    var today = new Date(); today.setHours(0,0,0,0);
+    if (travelDate < today) {
+      errorMsg.textContent = "That date's in the past — pick an upcoming travel date.";
+      errorMsg.hidden = false;
+      results.classList.remove("open");
+      return;
+    }
+    render(temple, travelDate, originInput.value.trim());
+    results.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+</script>
