@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pravaah — know exactly when to book</title>
 <style>
   :root {
@@ -418,12 +423,13 @@
   }
   .cost-field input, .cost-field select {
     font: inherit;
-    font-size: 14px;
-    padding: 9px 10px;
+    font-size: 16px;
+    padding: 10px;
     border-radius: 8px;
     border: 1px solid var(--line);
     background: var(--surface-sunk);
     color: var(--ink);
+    min-height: 44px;
   }
   .cost-output {
     margin-top: 6px;
@@ -467,6 +473,8 @@
     .panel, .suggestions { transition: opacity 0.15s ease; }
   }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <div class="brandbar">
@@ -1229,3 +1237,6 @@
     results.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 </script>
+
+</body>
+</html>
