@@ -1,0 +1,746 @@
+{
+  "meta": {
+    "lastRefreshed": "2026-10-06",
+    "refreshNote": "Darshan fees, booking windows and ID requirements are re-verified against official portals on a recurring schedule. Everything else (stay, hotels, transport, nearby temples) is static research data.",
+    "version": 1
+  },
+  "temples": [
+    {
+      "id": "tirupati",
+      "name": "Tirupati (Tirumala) — Sri Venkateswara Swamy Temple",
+      "aliases": [
+        "tirumala",
+        "tirupati balaji",
+        "venkateswara",
+        "balaji",
+        "ttd"
+      ],
+      "state": "Andhra Pradesh",
+      "deity": "Lord Venkateswara",
+      "entries": [
+        {
+          "label": "Sarvadarshanam (free darshan)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No booking — join the general queue at Tirumala.",
+          "link": "https://ttdevasthanams.ap.gov.in/",
+          "linkLabel": "TTD official portal",
+          "idRequired": "None for the general queue, though carrying a photo ID is wise.",
+          "feePerPerson": 0
+        },
+        {
+          "label": "₹300 Special Entry Darshan",
+          "fee": "₹300 per person",
+          "leadDays": 90,
+          "windowNote": "Released 90 days ahead · max 6 people per booking · non-transferable.",
+          "link": "https://ttdevasthanams.ap.gov.in/",
+          "linkLabel": "TTD official portal",
+          "idRequired": "Aadhaar is mandatory (Voter ID, Driving Licence or Passport also accepted) — every pilgrim's ID must match the booking exactly.",
+          "feePerPerson": 300
+        },
+        {
+          "label": "VIP Break Darshan (Srivani Trust)",
+          "fee": "₹10,000 donation + ₹500",
+          "leadDays": 30,
+          "windowNote": "Requires a Srivani Trust donation first, then a separate slot booking.",
+          "link": "https://ttdevasthanams.ap.gov.in/",
+          "linkLabel": "TTD official portal",
+          "idRequired": "Same Aadhaar/photo ID used for the Srivani Trust donation and booking.",
+          "feePerPerson": null,
+          "feeFlat": 10500
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "TTD accommodation — Srinivasam and other Nivas guest houses",
+          "link": "https://ttdevasthanams.ap.gov.in/",
+          "note": "Booked on the same TTD portal. Budget to mid-range, inside Tirumala itself.",
+          "distance": "TTD runs both on-hill cottages at Tirumala itself (walking distance to the temple) and Srinivasam in Tirupati town, ~22–25 km away with frequent connecting buses — which one you get depends on availability."
+        }
+      },
+      "mapQuery": "Tirupati Tirumala",
+      "transport": {
+        "airport": {
+          "name": "Tirupati Airport (TIR)",
+          "distance": "~15 km from Tirupati town, ~35 km from Tirumala hill"
+        },
+        "railway": {
+          "name": "Tirupati Railway Station (TPTY)",
+          "distance": "~22 km from Tirumala"
+        },
+        "lastMile": "TTD runs frequent free/paid buses from Tirupati up to Tirumala (about every 2 minutes); paid APSRTC buses and private cabs also run the ghat road. Autos work within Tirupati town but aren't used on the hill road."
+      },
+      "nearby": [
+        {
+          "name": "Sri Padmavathi Ammavari Temple, Tiruchanur",
+          "distance": "~5 km",
+          "note": "Goddess Padmavathi's temple — Lord Venkateswara's consort; many pilgrims visit both in one trip"
+        },
+        {
+          "name": "Sri Kalahasti Temple",
+          "distance": "~36 km",
+          "note": "A Pancha Bhuta Sthalam (Vayu/wind lingam), a major Shiva shrine"
+        }
+      ]
+    },
+    {
+      "id": "vaishnodevi",
+      "name": "Vaishno Devi (Katra) — Trikuta Hills",
+      "aliases": [
+        "mata vaishno devi",
+        "katra",
+        "trikuta",
+        "vaishnodevi"
+      ],
+      "state": "Jammu & Kashmir",
+      "deity": "Mata Vaishno Devi",
+      "entries": [
+        {
+          "label": "Yatra Parchi — RFID registration (mandatory)",
+          "fee": "Free",
+          "leadDays": 21,
+          "windowNote": "Rolling registration, no fixed release date — but register at least 2–3 weeks ahead. The portal can pause temporarily during extreme rush.",
+          "link": "https://online.maavaishnodevi.org/",
+          "linkLabel": "Shrine Board portal",
+          "idRequired": "Aadhaar, Voter ID, Driving Licence or Passport — carry the same ID used at registration when collecting your RFID card.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "Shrine Board Bhawans & Niharika",
+          "link": "https://www.maavaishnodevi.org/",
+          "note": "Book via the Shrine Board site. Dorm-style to simple private rooms along the trek route and at Katra base camp.",
+          "distance": "Niharika and the other base-camp bhawans are in Katra, ~13 km from the shrine itself; smaller Shrine Board bhawans also sit directly along the trek route (Adhkuwari, Sanjichhat) for pilgrims breaking the climb."
+        }
+      },
+      "mapQuery": "Katra Jammu",
+      "transport": {
+        "airport": {
+          "name": "Jammu Airport (IXJ)",
+          "distance": "~45 km from Katra"
+        },
+        "railway": {
+          "name": "Shri Mata Vaishno Devi Katra Railway Station (SVDK)",
+          "distance": "Right in Katra — the yatra starts a short walk from here"
+        },
+        "lastMile": "From Katra, the shrine is a ~13 km trek — on foot, by pony/mule, palki (palanquin), or helicopter from Sanjichhat (book separately, weather-dependent).",
+        "trekNote": true
+      },
+      "nearby": [
+        {
+          "name": "Baba Dhansar",
+          "distance": "~15 km from Katra",
+          "note": "Shiva shrine with a natural waterfall and cave"
+        },
+        {
+          "name": "Shiv Khori",
+          "distance": "~60–80 km from Katra",
+          "note": "Natural cave shrine of Lord Shiva, a popular full-day add-on"
+        }
+      ]
+    },
+    {
+      "id": "shirdi",
+      "name": "Shirdi — Sai Baba Samadhi Mandir",
+      "aliases": [
+        "sai baba",
+        "shirdi sai"
+      ],
+      "state": "Maharashtra",
+      "deity": "Shirdi Sai Baba",
+      "entries": [
+        {
+          "label": "Free Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No booking — general queue.",
+          "link": "https://online.sai.org.in/",
+          "linkLabel": "Sai Sansthan portal",
+          "idRequired": "None for the general queue.",
+          "feePerPerson": 0
+        },
+        {
+          "label": "Paid / VIP Darshan & Aarti",
+          "fee": "Paid, varies by seva",
+          "leadDays": 60,
+          "windowNote": "Quota released 60 days ahead.",
+          "link": "https://online.sai.org.in/",
+          "linkLabel": "Sai Sansthan portal",
+          "idRequired": "Government photo ID (Aadhaar, Passport, Voter ID or Driving Licence) — the name must match your booking exactly.",
+          "feePerPerson": null
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "Bhakt Niwas (Sansthan accommodation)",
+          "link": "https://sai.org.in/en/accomodations",
+          "note": "Booked 60 days ahead on the same portal. Max 4 people per room, 48-hour stay limit.",
+          "distance": "~1.3 km from the temple (New Bhakt Niwas) — a short auto ride or 15–20 minute walk."
+        }
+      },
+      "mapQuery": "Shirdi Maharashtra",
+      "transport": {
+        "airport": {
+          "name": "Shirdi Airport (SAG)",
+          "distance": "~10–15 km from the temple"
+        },
+        "railway": {
+          "name": "Sainagar Shirdi Railway Station (SNSI)",
+          "distance": "~3 km from the temple"
+        },
+        "lastMile": "Autos from the station run roughly ₹100 (small auto, 4–5 people) to ₹150 (larger shared auto); cabs are also easy to find."
+      },
+      "nearby": [
+        {
+          "name": "Shani Shingnapur",
+          "distance": "~70–75 km",
+          "note": "Famous open, door-less temple to Shani Dev"
+        }
+      ]
+    },
+    {
+      "id": "kedarnath",
+      "name": "Kedarnath Temple",
+      "aliases": [
+        "kedarnath",
+        "char dham kedarnath"
+      ],
+      "state": "Uttarakhand",
+      "deity": "Lord Shiva",
+      "entries": [
+        {
+          "label": "Char Dham Yatra registration (mandatory)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.",
+          "link": "https://registrationandtouristcare.uk.gov.in/",
+          "linkLabel": "Uttarakhand Tourist Care portal",
+          "idRequired": "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "GMVN guest houses",
+          "link": "https://gmvnonline.com/",
+          "note": "Government-run budget to mid-range rooms along the Char Dham route; Kedarnath itself also has basic trust-run rooms near the shrine.",
+          "distance": "GMVN's Kedarnath camps are ~0.5–2 km from the temple, right at the end of the trek."
+        }
+      },
+      "mapQuery": "Kedarnath Uttarakhand",
+      "transport": {
+        "airport": {
+          "name": "Jolly Grant Airport, Dehradun (DED)",
+          "distance": "~239 km from Kedarnath"
+        },
+        "railway": {
+          "name": "Rishikesh Railway Station",
+          "distance": "~215–220 km from Kedarnath"
+        },
+        "lastMile": "The road ends at Sonprayag/Gaurikund; from there it's a ~16–18 km trek, pony, palki or helicopter (from Phata/Sersi/Guptkashi) to the temple.",
+        "trekNote": true
+      },
+      "nearby": [
+        {
+          "name": "Tungnath (Panch Kedar)",
+          "distance": "~88 km by road + a 4 km trek (via Gaurikund–Sonprayag–Chopta)",
+          "note": "The world's highest Shiva temple, part of the Panch Kedar circuit"
+        }
+      ],
+      "chardhamCircuit": true
+    },
+    {
+      "id": "badrinath",
+      "name": "Badrinath Temple",
+      "aliases": [
+        "badrinath",
+        "badrinarayan",
+        "char dham badrinath"
+      ],
+      "state": "Uttarakhand",
+      "deity": "Lord Vishnu (Badrinarayan)",
+      "entries": [
+        {
+          "label": "Char Dham Yatra registration (mandatory)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.",
+          "link": "https://registrationandtouristcare.uk.gov.in/",
+          "linkLabel": "Uttarakhand Tourist Care portal",
+          "idRequired": "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "GMVN guest houses",
+          "link": "https://gmvnonline.com/",
+          "note": "Government-run budget to mid-range rooms; Badrinath town also has private hotels and dharamshalas near the temple.",
+          "distance": "~700 m from the temple — an easy walk."
+        }
+      },
+      "mapQuery": "Badrinath Uttarakhand",
+      "transport": {
+        "airport": {
+          "name": "Jolly Grant Airport, Dehradun (DED)",
+          "distance": "~310–320 km from Badrinath"
+        },
+        "railway": {
+          "name": "Rishikesh Railway Station",
+          "distance": "~295–300 km from Badrinath"
+        },
+        "lastMile": "Badrinath is motorable all the way via Joshimath — shared taxis and buses run right to the temple; no trek required for the main shrine."
+      },
+      "nearby": [
+        {
+          "name": "Mana Village",
+          "distance": "~3 km",
+          "note": "India's last village before the Tibet border — Vyas Gufa and Bhim Pul are close by"
+        }
+      ],
+      "chardhamCircuit": true
+    },
+    {
+      "id": "gangotri",
+      "name": "Gangotri Temple",
+      "aliases": [
+        "gangotri",
+        "char dham gangotri"
+      ],
+      "state": "Uttarakhand",
+      "deity": "Goddess Ganga",
+      "entries": [
+        {
+          "label": "Char Dham Yatra registration (mandatory)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.",
+          "link": "https://registrationandtouristcare.uk.gov.in/",
+          "linkLabel": "Uttarakhand Tourist Care portal",
+          "idRequired": "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "GMVN guest houses",
+          "link": "https://gmvnonline.com/",
+          "note": "Government-run budget rooms along the route; limited private options directly in Gangotri.",
+          "distance": "Right by the temple — around 30–40 m away."
+        }
+      },
+      "mapQuery": "Gangotri Uttarakhand",
+      "transport": {
+        "airport": {
+          "name": "Jolly Grant Airport, Dehradun (DED)",
+          "distance": "~250–280 km from Gangotri"
+        },
+        "railway": {
+          "name": "Rishikesh Railway Station",
+          "distance": "~250–260 km from Gangotri"
+        },
+        "lastMile": "Gangotri is motorable all the way via Uttarkashi — shared taxis and buses run right to the temple; no trek required for the main shrine."
+      },
+      "nearby": [
+        {
+          "name": "Gaumukh",
+          "distance": "~18 km trek",
+          "note": "The source glacier of the Bhagirathi/Ganga river"
+        }
+      ],
+      "chardhamCircuit": true
+    },
+    {
+      "id": "yamunotri",
+      "name": "Yamunotri Temple",
+      "aliases": [
+        "yamunotri",
+        "char dham yamunotri"
+      ],
+      "state": "Uttarakhand",
+      "deity": "Goddess Yamuna",
+      "entries": [
+        {
+          "label": "Char Dham Yatra registration (mandatory)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "Opens a few months before the season (route open roughly late April to early November). Register as soon as it opens, and try the portal at 5–8am or 10–11pm — midday traffic causes frequent failures.",
+          "link": "https://registrationandtouristcare.uk.gov.in/",
+          "linkLabel": "Uttarakhand Tourist Care portal",
+          "idRequired": "Aadhaar, Voter ID, PAN, Passport or Driving Licence uploaded at registration; children can use Aadhaar, a school ID or birth certificate at offline counters.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "GMVN guest houses",
+          "link": "https://gmvnonline.com/",
+          "note": "Government-run budget rooms near Janki Chatti, a short trek from the shrine.",
+          "distance": "At Janki Chatti, the roadhead — about 5–6 km short of the shrine itself (see the trek note below)."
+        }
+      },
+      "mapQuery": "Yamunotri Uttarakhand",
+      "transport": {
+        "airport": {
+          "name": "Jolly Grant Airport, Dehradun (DED)",
+          "distance": "~210–220 km from Janki Chatti"
+        },
+        "railway": {
+          "name": "Rishikesh Railway Station",
+          "distance": "~190–200 km from Janki Chatti"
+        },
+        "lastMile": "The road ends at Janki Chatti; from there it's a ~5–6 km trek, pony or palki to the shrine.",
+        "trekNote": true
+      },
+      "nearby": [
+        {
+          "name": "Surya Kund",
+          "distance": "~100 m from the temple",
+          "note": "A hot spring where pilgrims cook rice as prasad"
+        }
+      ],
+      "chardhamCircuit": true
+    },
+    {
+      "id": "kashivishwanath",
+      "name": "Kashi Vishwanath Temple (Varanasi)",
+      "aliases": [
+        "varanasi",
+        "banaras",
+        "kashi",
+        "kashi vishwanath"
+      ],
+      "state": "Uttar Pradesh",
+      "deity": "Lord Shiva",
+      "entries": [
+        {
+          "label": "Free Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No booking — general queue.",
+          "link": "https://www.shrikashivishwanath.org/",
+          "linkLabel": "Temple official portal",
+          "idRequired": "None for the general queue.",
+          "feePerPerson": 0
+        },
+        {
+          "label": "Sugam Darshan (queue-less)",
+          "fee": "₹300",
+          "leadDays": 45,
+          "windowNote": "Bookable up to 45 days ahead.",
+          "link": "https://www.shrikashivishwanath.org/",
+          "linkLabel": "Temple official portal",
+          "idRequired": "Government photo ID entered at booking (Aadhaar, Passport, etc.) — must match what you present at entry.",
+          "feePerPerson": 300
+        }
+      ],
+      "stay": {
+        "official": null,
+        "note": "No single official dharamshala portal found — many choultries and dharamshalas operate near Vishwanath Gali on a walk-in or phone basis. Hotels are widely available across Varanasi."
+      },
+      "mapQuery": "Varanasi near Kashi Vishwanath Temple",
+      "transport": {
+        "airport": {
+          "name": "Lal Bahadur Shastri Airport, Varanasi (VNS)",
+          "distance": "~25 km from the temple"
+        },
+        "railway": {
+          "name": "Varanasi Junction (BSB)",
+          "distance": "~4–5 km from the temple"
+        },
+        "lastMile": "Autos, e-rickshaws and cycle-rickshaws run from the station; vehicles can't go right up to Vishwanath Gali, so expect a short walk for the last stretch."
+      },
+      "nearby": [
+        {
+          "name": "Sankat Mochan Hanuman Temple",
+          "distance": "~3 km from BHU",
+          "note": "Popular Hanuman shrine, founded by Tulsidas"
+        },
+        {
+          "name": "Durga Temple (Durga Kund)",
+          "distance": "~2 km from BHU",
+          "note": "Also called the Monkey Temple"
+        },
+        {
+          "name": "New Vishwanath Temple, BHU",
+          "distance": "On the BHU campus",
+          "note": "A modern replica built by the Birla family"
+        }
+      ]
+    },
+    {
+      "id": "goldentemple",
+      "name": "Golden Temple (Sri Harmandir Sahib, Amritsar)",
+      "aliases": [
+        "amritsar",
+        "harmandir sahib",
+        "darbar sahib",
+        "golden temple"
+      ],
+      "state": "Punjab",
+      "deity": "Holiest Sikh Gurdwara",
+      "entries": [
+        {
+          "label": "Darshan (open 24 hours)",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No booking needed — open to all, every day, 24 hours.",
+          "link": "https://www.goldentempleamritsar.org/",
+          "linkLabel": "Temple information site",
+          "idRequired": "None — open to all.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": {
+          "label": "SGPC Sarai (pilgrim inns)",
+          "link": "https://sgpcsarai.com/",
+          "note": "Free to nominal-cost rooms run by SGPC. Minimum 2 people per booking, max 2 nights — book a few days ahead around festivals.",
+          "distance": "Inside the Golden Temple's own sarai complex — effectively on-site, a short walk from the sanctum."
+        }
+      },
+      "mapQuery": "Amritsar near Golden Temple",
+      "transport": {
+        "airport": {
+          "name": "Sri Guru Ram Dass Jee International Airport (ATQ)",
+          "distance": "~11 km from the Golden Temple"
+        },
+        "railway": {
+          "name": "Amritsar Junction (ASR)",
+          "distance": "~2 km from the Golden Temple"
+        },
+        "lastMile": "Autos, e-rickshaws and cabs run throughout Amritsar; the Golden Temple's own plazas handle the final stretch on foot."
+      },
+      "nearby": [
+        {
+          "name": "Durgiana Temple",
+          "distance": "~1.2 km",
+          "note": "A Hindu temple built in a similar style to the Golden Temple"
+        }
+      ]
+    },
+    {
+      "id": "ayodhya",
+      "name": "Shri Ram Janmbhoomi Mandir, Ayodhya",
+      "aliases": [
+        "ayodhya",
+        "ram janmabhoomi",
+        "ram mandir"
+      ],
+      "state": "Uttar Pradesh",
+      "deity": "Lord Ram",
+      "entries": [
+        {
+          "label": "General Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No pass needed — general queue.",
+          "link": "https://online.srjbtkshetra.org/",
+          "linkLabel": "Shri Ram Janmbhoomi Teerth Kshetra portal",
+          "idRequired": "None for the general queue.",
+          "feePerPerson": 0
+        },
+        {
+          "label": "Sugam Darshan pass",
+          "fee": "Free (pass only)",
+          "leadDays": 14,
+          "windowNote": "Free, but book as soon as your dates are fixed — footfall is extremely high (23+ crore visitors in 2025).",
+          "link": "https://online.srjbtkshetra.org/",
+          "linkLabel": "Shri Ram Janmbhoomi Teerth Kshetra portal",
+          "idRequired": "Government photo ID declared at booking (Aadhaar, Voter ID, Driving Licence or Passport) — the physical copy is mandatory for entry.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": null,
+        "note": "No single official accommodation portal found — the Trust and UP Tourism list dharamshalas; roughly 50 new hotels were opening through 2025 to meet demand."
+      },
+      "mapQuery": "Ayodhya Uttar Pradesh",
+      "transport": {
+        "airport": {
+          "name": "Maharishi Valmiki International Airport, Ayodhya (AYJ)",
+          "distance": "~10–15 km from the temple"
+        },
+        "railway": {
+          "name": "Ayodhya Dham Junction",
+          "distance": "~5 km from the temple"
+        },
+        "lastMile": "Autos, e-rickshaws and cabs run from both the airport and station into central Ayodhya."
+      },
+      "nearby": [
+        {
+          "name": "Hanuman Garhi",
+          "distance": "~700 m",
+          "note": "Hilltop Hanuman temple — most pilgrims visit this first"
+        },
+        {
+          "name": "Kanak Bhawan",
+          "distance": "~600 m",
+          "note": "Temple to Ram and Sita, known for its ornate interiors"
+        },
+        {
+          "name": "Nageshwarnath Temple",
+          "distance": "~1.5–1.8 km",
+          "note": "Ancient Shiva temple linked to Kush, son of Lord Ram"
+        }
+      ]
+    },
+    {
+      "id": "puri",
+      "name": "Shree Jagannath Temple, Puri",
+      "aliases": [
+        "puri",
+        "jagannath temple",
+        "jagannath puri"
+      ],
+      "state": "Odisha",
+      "deity": "Lord Jagannath",
+      "entries": [
+        {
+          "label": "General Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No online booking system found as of this research. Temple opens 5am — arrive early morning or evening to avoid the longest queues. Note: entry is restricted to Hindus; non-Hindu visitors can view the temple from the Meghanad Pacheri boundary wall. Check SJTA's official channels for any future booking system.",
+          "link": "https://shreejagannathapuri.com/",
+          "linkLabel": "Temple information site",
+          "idRequired": "None required for entry, though it is restricted to Hindus (see note above).",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": null,
+        "note": "Numerous mutths and dharamshalas near the temple, mostly walk-in. Hotels widely available along Puri's beach road."
+      },
+      "mapQuery": "Puri near Jagannath Temple",
+      "transport": {
+        "airport": {
+          "name": "Biju Patnaik International Airport, Bhubaneswar (BBI)",
+          "distance": "~60 km from Puri"
+        },
+        "railway": {
+          "name": "Puri Railway Station",
+          "distance": "~2 km from the temple"
+        },
+        "lastMile": "Autos and cycle-rickshaws run from the station into the temple area."
+      },
+      "nearby": [
+        {
+          "name": "Konark Sun Temple",
+          "distance": "~35 km",
+          "note": "UNESCO World Heritage Sun Temple"
+        },
+        {
+          "name": "Lingaraj Temple, Bhubaneswar",
+          "distance": "~65 km",
+          "note": "One of Odisha's oldest and largest Shiva temples"
+        }
+      ]
+    },
+    {
+      "id": "rameswaram",
+      "name": "Ramanathaswamy Temple, Rameswaram",
+      "aliases": [
+        "rameswaram",
+        "ramanathaswamy"
+      ],
+      "state": "Tamil Nadu",
+      "deity": "Lord Shiva",
+      "entries": [
+        {
+          "label": "General Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No online booking system found — managed by Tamil Nadu HR&CE, general queue-based entry.",
+          "link": "https://rameswaramramanathar.hrce.tn.gov.in/",
+          "linkLabel": "HR&CE temple portal",
+          "idRequired": "None for general entry.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": null,
+        "note": "Choultries and dharamshalas near the temple on a walk-in basis. Hotels available across Rameswaram town."
+      },
+      "mapQuery": "Rameswaram Tamil Nadu",
+      "transport": {
+        "airport": {
+          "name": "Madurai Airport (IXM)",
+          "distance": "~170–175 km from Rameswaram"
+        },
+        "railway": {
+          "name": "Rameswaram Railway Station (RMM)",
+          "distance": "Right in town, ~1–2 km from the temple"
+        },
+        "lastMile": "Autos and cabs run from the station; Madurai airport taxis also run the full route directly to Rameswaram."
+      },
+      "nearby": [
+        {
+          "name": "Kothandaramaswamy Temple",
+          "distance": "~13 km, en route to Dhanushkodi",
+          "note": "The only structure left standing after the 1964 cyclone"
+        },
+        {
+          "name": "Dhanushkodi",
+          "distance": "~19 km",
+          "note": "Ghost town at the island's tip, with ruined temple remains"
+        }
+      ]
+    },
+    {
+      "id": "dwarka",
+      "name": "Dwarkadhish Temple, Dwarka",
+      "aliases": [
+        "dwarka",
+        "dwarkadhish"
+      ],
+      "state": "Gujarat",
+      "deity": "Lord Krishna",
+      "entries": [
+        {
+          "label": "General Darshan",
+          "fee": "Free",
+          "leadDays": null,
+          "windowNote": "No centralized online booking portal identified in this research — general queue-based entry. Check the Dwarkadhish Temple Trust or Gujarat Tourism closer to your date.",
+          "link": null,
+          "linkLabel": null,
+          "idRequired": "None for general entry.",
+          "feePerPerson": 0
+        }
+      ],
+      "stay": {
+        "official": null,
+        "note": "Dharamshalas run by various trusts near the temple. Hotels available across Dwarka town."
+      },
+      "mapQuery": "Dwarka Gujarat",
+      "transport": {
+        "airport": {
+          "name": "Jamnagar Airport (JGA) or Porbandar Airport (PBD)",
+          "distance": "~110 km (Jamnagar) / ~108 km (Porbandar) from Dwarka"
+        },
+        "railway": {
+          "name": "Dwarka Railway Station",
+          "distance": "~1–2 km from the temple"
+        },
+        "lastMile": "Autos and cabs run from the station; both airports have taxi counters for the longer run into Dwarka."
+      },
+      "nearby": [
+        {
+          "name": "Nageshwar Jyotirlinga",
+          "distance": "~18 km",
+          "note": "One of the 12 Jyotirlingas of Lord Shiva"
+        },
+        {
+          "name": "Rukmini Devi Temple",
+          "distance": "~2 km",
+          "note": "Dedicated to Lord Krishna's chief queen"
+        },
+        {
+          "name": "Bet Dwarka",
+          "distance": "Ferry from Okha, ~30 km away",
+          "note": "Island believed to be Krishna's original residence"
+        }
+      ]
+    }
+  ]
+}
